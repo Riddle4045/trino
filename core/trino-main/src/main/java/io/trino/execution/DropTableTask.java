@@ -62,23 +62,17 @@ public class DropTableTask
         Session session = stateMachine.getSession();
         QualifiedObjectName originalTableName = createQualifiedObjectName(session, statement, statement.getTableName());
         if (metadata.isMaterializedView(session, originalTableName)) {
-            if (!statement.isExists()) {
-                throw semanticException(
-                        TABLE_NOT_FOUND,
-                        statement,
-                        "Table '%s' does not exist, but a materialized view with that name exists. Did you mean DROP MATERIALIZED VIEW %s?", originalTableName, originalTableName);
-            }
-            return immediateVoidFuture();
+            throw semanticException(
+                    TABLE_NOT_FOUND,
+                    statement,
+                    "Table '%s' does not exist, but a materialized view with that name exists. Did you mean DROP MATERIALIZED VIEW %s?", originalTableName, originalTableName);
         }
 
         if (metadata.isView(session, originalTableName)) {
-            if (!statement.isExists()) {
-                throw semanticException(
-                        TABLE_NOT_FOUND,
-                        statement,
-                        "Table '%s' does not exist, but a view with that name exists. Did you mean DROP VIEW %s?", originalTableName, originalTableName);
-            }
-            return immediateVoidFuture();
+            throw semanticException(
+                    TABLE_NOT_FOUND,
+                    statement,
+                    "Table '%s' does not exist, but a view with that name exists. Did you mean DROP VIEW %s?", originalTableName, originalTableName);
         }
 
         RedirectionAwareTableHandle redirectionAwareTableHandle = metadata.getRedirectionAwareTableHandle(session, originalTableName);
